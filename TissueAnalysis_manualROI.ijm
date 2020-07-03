@@ -29,23 +29,35 @@ function processFile(input, output, file) {
 	//In order to obtain a preview image for the user to define ROIs 
 	run("RGB Color");
 	rename("Preview");
-
+	roiManager("show all without label");
+	
 	waitForUser("Draw ROIs around single cells using the freehand selection tool; press the 't' key after every ROI and 'OK' once done with the image.");
 	
 	//save all ROIs defined by user
 	roiManager("Save", output+File.separator+file+".zip");
 
-	// measure signal intensity of the channel of interest
 	selectWindow(file);
-	run("Duplicate...", "title=Channel2 duplicate channels=2");
+	//Change channel here: alphaSMA
+	run("Duplicate...", "title=alphaSMA duplicate channels=2");
+	rename(file+"-alphaSMA");
+	
+	// measure signal intensity of the channel of interest
 	roiManager("SelectAll");
 	roiManager("Measure");
-	saveAs("Results", output+File.separator+file+"-Results.csv");
+
+	//save original file with ROIs 
+	selectWindow(file);
+	roiManager("Show All without labels");
+	run("From ROI Manager");
+	run("Overlay Options...", "stroke=yellow width=4 fill=none apply");
+	run("Flatten");
+	run("Save", "save=["+output+File.separator+file+"-ROIs.png]");
 
 	//close all Windows and clear ROIManager and Results table
 	roiManager("Select All");
 	roiManager("Delete");
 	run("Close All");
-	run("Clear Results");
-	
 }
+
+	saveAs("Results", output+File.separator+"alphaSMA-Results.csv");
+	run("Clear Results");
