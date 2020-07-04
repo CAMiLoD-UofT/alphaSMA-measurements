@@ -1,6 +1,6 @@
 // Detect alphaSMA coherency raw integrated density and intensity levels based on cell shape as determined by the user
 // By Joao Firmino, PhD
-// v0.3
+// v0.4
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
@@ -27,9 +27,10 @@ function processFile(input, output, file) {
 	// First step consist in opening an image
 	// If file format is TIF, images are split into three 8-bit-channels; you MUST verify that channels only contain the expected signal (i.e. no channel merging)
 	open(file);
-	if(suffix==".tif") {
+		if(suffix==".tif") {
 		run("Make Composite");
-	}	
+		run("Properties...");
+		}	
 	
 	// we then duplicate channels of interest required for future steps (Nuclei and Phalloidin)
 	selectWindow(file);
