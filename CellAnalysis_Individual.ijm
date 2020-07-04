@@ -29,6 +29,7 @@ function processFile(input, output, file) {
 	open(file);
 	if(suffix==".tif") {
 		run("Make Composite");
+		run("Properties...");
 	}	
 	
 	// we then duplicate channels of interest required for future steps (Nuclei and Phalloidin)
