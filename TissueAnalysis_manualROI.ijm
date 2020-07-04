@@ -1,7 +1,6 @@
-// Tissue Quantification of Signal
-// for Book Chapter
+// Tissue Quantification of alphaSMA intensity levels by manually defining ROIs
 // by Joao Firmino, PhD
-// v0.1
+// v0.2
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
@@ -23,8 +22,12 @@ function processFolder(input) {
 
 function processFile(input, output, file) {
 	
-	open(file);
 	run("Set Measurements...", " mean integrated limit display redirect=None decimal=3");
+	open(file);
+		if(suffix==".tif") {
+		run("Make Composite");
+		run("Properties...");
+		}	
 	
 	//In order to obtain a preview image for the user to define ROIs 
 	run("RGB Color");
