@@ -1,6 +1,6 @@
 // Detect alphaSMA coherency raw integrated density and intensity levels based on cell shape as determined by the phalloidin staining
 // By Joao Firmino, PhD
-// v0.3
+// v0.4
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
