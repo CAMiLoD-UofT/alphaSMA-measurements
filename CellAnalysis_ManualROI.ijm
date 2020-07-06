@@ -26,7 +26,7 @@ function processFile(input, output, file) {
 	
 	// First step consist in opening an image
 	// If file format is TIF, images are split into three 8-bit-channels; you MUST verify that channels only contain the expected signal (i.e. no channel merging)
-	open(file);
+	open(input+File.separator+file);
 		if(suffix==".tif") {
 		run("Make Composite");
 		run("Properties...");
