@@ -47,8 +47,8 @@ function processFile(input, output, file) {
 	setAutoThreshold("Triangle dark");
 	run("Convert to Mask", "method=Triangle background=Dark calculate black");
 
-	// we now proceed to identify all ROIs with an area between 3000 and infinite pixel^2 - this is the only step where the user induces some bias!!
-	run("Analyze Particles...", "size=3000-Infinite add");
+	// we now proceed to identify all ROIs with an area between 40 and infinite micron^2 - this is the only step where the user induces some bias!!
+	run("Analyze Particles...", "size=40-Infinite add");
 	roiManager("Save", output+File.separator+file+".zip");
 
 	// we have the ROIs with the appropriate size so all we have to do now is apply them to the signal channel and measure signal intensities
