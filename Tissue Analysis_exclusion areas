@@ -1,4 +1,4 @@
-// Tissue Quantification of alphaSMA intensity levels by manually defining ROIs
+// Tissue Quantification of alphaSMA intensity levels by manually defining excluded areas of the image
 // by Joao Firmino, PhD
 // v0.2
 
@@ -22,7 +22,7 @@ function processFolder(input) {
 
 function processFile(input, output, file) {
 	
-	run("Set Measurements...", " mean integrated limit display redirect=None decimal=3");
+	run("Set Measurements...", " area mean integrated limit display redirect=None decimal=3");
 	open(input+File.separator+file);
 		if(suffix==".tif") {
 		run("Make Composite");
@@ -34,10 +34,35 @@ function processFile(input, output, file) {
 	rename("Preview");
 	roiManager("show all without label");
 	
-	waitForUser("Draw ROIs around bona fide tissue areas using the freehand selection tool; press the 't' key after every ROI and 'OK' once done with the image.");
-	
-	//save all ROIs defined by user
+	waitForUser("Draw ROIs around vessels and areas you would like to exclude; press the 't' key after every ROI and 'OK' once done with the image.");
+
+	//save all ROIs of excluded areas defined by user
 	roiManager("Save", output+File.separator+file+".zip");
+
+	//if using threshold for tissue gaps, please remove "/*" and "*/" from the following lines
+
+	/*
+	selectWindow(file);
+	run("Duplicate...", "title=alphaSMA duplicate channels=2");
+	rename("alphaSMA");
+
+	setAutoThreshold("Huang");
+	//setThreshold(0, 5);
+	run("Convert to Mask");
+	run("Create Selection");
+	roiManager("Add");
+	*/
+
+	selectWindow("Preview");
+	run("Select All");
+	roiManager("Add");
+	roiManager("Select All");
+	roiManager("XOR");	
+	roiManager("Add");
+	
+	//the last ROI to be added (nR-1) should be the one used in the measurements
+
+	nR = roiManager("count");
 
 	selectWindow(file);
 	//Change channel here: alphaSMA
@@ -45,12 +70,13 @@ function processFile(input, output, file) {
 	rename(file+"-alphaSMA");
 	
 	// measure signal intensity of the channel of interest
-	roiManager("SelectAll");
+	roiManager("Select", nR-1);
 	roiManager("Measure");
 
 	//save original file with ROIs 
 	selectWindow(file);
 	roiManager("Show All without labels");
+	roiManager("Select", nR-1);
 	run("From ROI Manager");
 	run("Overlay Options...", "stroke=yellow width=4 fill=none apply");
 	run("Flatten");

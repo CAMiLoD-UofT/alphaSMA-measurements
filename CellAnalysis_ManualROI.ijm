@@ -1,6 +1,6 @@
 // Detect alphaSMA coherency raw integrated density and intensity levels based on cell shape as determined by the user
 // By Joao Firmino, PhD
-// v0.2
+// v0.4
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
@@ -22,19 +22,22 @@ function processFolder(input) {
 
 function processFile(input, output, file) {
 	
-	run("Set Measurements...", " mean integrated limit display redirect=None decimal=3");
+	run("Set Measurements...", " mean integrated display redirect=None decimal=3");
 	
-	//First step consist in opening an image
-	open(file);
-
+	// First step consist in opening an image
+	// If file format is TIF, images are split into three 8-bit-channels; you MUST verify that channels only contain the expected signal (i.e. no channel merging)
+	open(input+File.separator+file);
+		if(suffix==".tif") {
+		run("Make Composite");
+		run("Properties...");
+		}	
+	
 	// we then duplicate channels of interest required for future steps (Nuclei and Phalloidin)
 	selectWindow(file);
-	//Change channel here: nuclei
-	run("Duplicate...", "duplicate channels=3-3 title=Nuclei");
+	run("Duplicate...", "duplicate channels=3-3 title=Nuclei");	//Change channel here: nuclei
 	
 	selectWindow(file);
-	//Change channel here: phalloidin
-	run("Duplicate...", "duplicate channels=2-2 title=Phalloidin");
+	run("Duplicate...", "duplicate channels=2-2 title=Phalloidin");	//Change channel here: phalloidin
 
 	//we blur the Phalloidin image so we can get outlines of the cell
 	selectWindow("Phalloidin");
@@ -54,8 +57,7 @@ function processFile(input, output, file) {
 
 	// we have the ROIs so all we have to do now is apply them to the channels of interest
 	selectWindow(file);
-	//Change channel here: alphaSMA
-	run("Duplicate...", "duplicate channels=1-1 title=alphaSMA");
+	run("Duplicate...", "duplicate channels=1-1 title=alphaSMA");	//Change channel here: alphaSMA
 	selectWindow("alphaSMA");
 	rename(file+"-alphaSMA");
 
@@ -70,7 +72,7 @@ function processFile(input, output, file) {
 	
 	//select the Coherency window and save the file
 	selectWindow(file+"-Coherency");
-	run("Save", "save=["+output+File.separator+file+"-Coherency.tif]");
+	run("Save", "save=["+output+File.separator+file+"-Coherency.png]");
 	
 	//we now measure alphaSMA intensity in the cell shape ROI
 	selectWindow(file+"-alphaSMA");
@@ -80,7 +82,7 @@ function processFile(input, output, file) {
 	//we now count the number of nuclei in the image
 	selectWindow("Nuclei");
 	rename(file+"-Nuclei");
-	run("Gaussian Blur...", "sigma=5");
+	run("Gaussian Blur...", "sigma=10");
 	run("Find Maxima...", "prominence=20 output=Count");
 
 	//save original file with ROIs 
@@ -89,12 +91,12 @@ function processFile(input, output, file) {
 	run("From ROI Manager");
 	run("Overlay Options...", "stroke=yellow width=4 fill=none apply");
 	run("Flatten");
-	run("Save", "save=["+output+File.separator+file+"-ROIs.tif]");
+	run("Save", "save=["+output+File.separator+file+"-ROIs.png]");
 
 	// before we move on to the next image we should clear the ROI manager of all the previously identified ROIs and all open windows
 	roiManager("Delete");
 	run("Close All");
-}
 
+}
 	saveAs("alphaSMAResults", output+File.separator+"alphaSMA-Results.csv");
 	run("Clear Results");

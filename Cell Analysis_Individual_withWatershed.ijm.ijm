@@ -1,4 +1,4 @@
-// Detect mean alphaSMA coherency raw integrated density and intensity levels on very confluent cells using a Voronoi approach to segment image
+// Detect alphaSMA coherency raw integrated density and intensity levels based on cell shape as determined by the phalloidin staining
 // By Joao Firmino, PhD
 // v0.4
 
@@ -32,53 +32,56 @@ function processFile(input, output, file) {
 		run("Properties...");
 		}	
 	
-	//we start by counting the number of nuclei in the image
-	run("Duplicate...", "duplicate channels=3-3 title=Nuclei"); //Change channel here: nuclei
-	selectWindow("Nuclei");
-	rename(file+"-Nuclei");	
-	run("Gaussian Blur...", "sigma=10"); 
-	run("Find Maxima...", "prominence=20 output=Count");
+	// we then duplicate channels of interest required for future steps (Nuclei and Phalloidin)
+	selectWindow(file);
+	run("Duplicate...", "duplicate channels=3-3 title=Nuclei");	//Change channel here: nuclei
+	
+	// we duplicate the Phalloidin channel; naming it Phalloidin and selecting the window
+	selectWindow(file);
+	run("Duplicate...", "duplicate channels=2-2 title=Phalloidin");	//Change channel here: phalloidin
 
+	//we blur the image so we can get outlines of the cell
+	run("Gaussian Blur...", "sigma=2");
 
-	//Cell-related segments in highly confluent cultures will be determined by Voronoi
-	selectWindow(file+"-Nuclei");
-	setAutoThreshold("Otsu dark");
-	run("Convert to Mask");
-	run("Voronoi");
-	setAutoThreshold("Default dark");
-	setThreshold(1, 255);
-	run("Convert to Mask");
-	run("Dilate");
-	run("Dilate");
-	run("Outline");
-	run("Close-");
-	run("Analyze Particles...", "size=0-Infinity exclude add");
-	roiManager("SelectAll");
+	// next step consists in applying a Triangle autothreshold to binarise the signal and obtain a mask representing the cell shape
+	setAutoThreshold("Triangle dark");
+	run("Convert to Mask", "method=Triangle background=Dark calculate black");
+
+	//We now run a watershed function to determine individual cells
+	run("Distance Transform Watershed", "distances=[Quasi-Euclidean (1,1.41)] output=[32 bits] normalize dynamic=25.00 connectivity=8"); //change the dynamic value if you wish to readjust how the plugin identifies cells
+
+	//we extract the ROIs from the created label image and save the ROis in a zip file
+	run("Label image to ROIs");
 	roiManager("Save", output+File.separator+file+".zip");
 
-	// we have the ROIs with the appropriate size so all we have to do now is apply them to the signal channel and measure signal intensities
+	// we have the ROIs so all we have to do now is apply them to the signal channel and measure signal intensities
 	selectWindow(file);
 	run("Duplicate...", "duplicate channels=1-1 title=alphaSMA"); //Change channel here: alphaSMA
-	selectWindow("alphaSMA");
 	rename(file+"-alphaSMA");
 
 	//run OrientationJ and more specifically the coherency analysis
 	run("OrientationJ Analysis", "tensor=2.0 gradient=1 hsb=on hue=Orientation sat=Coherency bri=Original-Image coherency=on radian=on ");
 	selectWindow("OJ-Coherency-1");
 	rename(file+"-Coherency");
-
+	
 	//restore selection and measure the average mean of coherency in the cell shape ROI
-	roiManager("Show All");
+	roiManager("SelectAll");
 	roiManager("Measure");
-	
+
 	//select the Coherency window and save the file
+	selectWindow(file+"-Coherency");
 	run("Save", "save=["+output+File.separator+file+"-Coherency.png]");
-	
+
 	//we now measure alphaSMA intensity in the cell shape ROI
 	selectWindow(file+"-alphaSMA");
-	roiManager("Show None");
-	roiManager("Show All");
+	roiManager("SelectAll");
 	roiManager("Measure");
+
+	//we start by counting the number of nuclei in the image
+	selectWindow("Nuclei");
+	rename(file+"-Nuclei");
+	run("Gaussian Blur...", "sigma=10");
+	run("Find Maxima...", "prominence=20 output=Count");
 
 	//save original file with ROIs 
 	selectWindow(file);
@@ -87,11 +90,11 @@ function processFile(input, output, file) {
 	run("Overlay Options...", "stroke=yellow width=4 fill=none apply");
 	run("Flatten");
 	run("Save", "save=["+output+File.separator+file+"-ROIs.png]");
-
+	
 	// before we move on to the next image we clear the ROI manager of all the previously identified ROIs and all open windows
 	roiManager("Delete");
 	run("Close All");
-
+	
 }
 
 	saveAs("alphaSMAResults", output+File.separator+"alphaSMA-Results.csv");
