@@ -34,7 +34,7 @@ function processFile(input, output, file) {
 	rename("Preview");
 	roiManager("show all without label");
 	
-	waitForUser("Draw ROIs around single cells using the freehand selection tool; press the 't' key after every ROI and 'OK' once done with the image.");
+	waitForUser("Draw ROIs around bona fide tissue areas using the freehand selection tool; press the 't' key after every ROI and 'OK' once done with the image.");
 	
 	//save all ROIs defined by user
 	roiManager("Save", output+File.separator+file+".zip");
