@@ -71,13 +71,13 @@ function processFile(input, output, file) {
 	rename(file+"-alphaSMA");
 	
 	// measure signal intensity of the channel of interest
-	roiManager("Select", nR);
+	roiManager("Select", nR-1);
 	roiManager("Measure");
 
 	//save original file with ROIs 
 	selectWindow(file);
 	roiManager("Show All without labels");
-	roiManager("Select", nR);
+	roiManager("Select", nR-1);
 	
 	run("From ROI Manager");
 	run("Overlay Options...", "width=4 fill=none apply");
