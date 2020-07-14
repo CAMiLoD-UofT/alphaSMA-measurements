@@ -82,7 +82,8 @@ function processFile(input, output, file) {
 	//we now count the number of nuclei in the image
 	selectWindow("Nuclei");
 	rename(file+"-Nuclei");
-	run("Gaussian Blur...", "sigma=10");
+	run("Gaussian Blur...", "sigma=15");
+	run("Save", "save=["+output+File.separator+file+"-NucleiDetection.png]");
 	run("Find Maxima...", "prominence=20 output=Count");
 
 	//save original file with ROIs 
