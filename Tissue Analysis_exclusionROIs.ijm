@@ -35,51 +35,52 @@ function processFile(input, output, file) {
 	roiManager("show all without label");
 	
 	waitForUser("Draw ROIs around vessels and areas you would like to exclude; press the 't' key after every ROI and 'OK' once done with the image.");
-
-	//save all ROIs of excluded areas defined by user
+	
+	//save all ROIs defined by user
 	roiManager("Save", output+File.separator+file+".zip");
 
 	//if using threshold for tissue gaps, please remove "/*" and "*/" from the following lines
 
 	/*
-	selectWindow(file);
-	run("Duplicate...", "title=alphaSMA duplicate channels=2");
-	rename("alphaSMA");
-
-	setAutoThreshold("Huang");
-	//setThreshold(0, 5);
-	run("Convert to Mask");
-	run("Create Selection");
-	roiManager("Add");
-	*/
-
+	//this threshold step is to detect all black areas within the image - proceed with caution
 	selectWindow("Preview");
+	run("Color Threshold...");
+	waitForUser("Select the appropriate Threshold method - Triangle usually works best - and deselect the Dark Background checkbox. Once happy with the black selection, click on the Select button and afterwards press OK in this dialog box to proceed");
+	roiManager("Add");
+		
+	selectWindow("Preview");
+	roiManager("Select All");
+	roiManager("Combine");
 	run("Select All");
 	roiManager("Add");
-	roiManager("Select All");
-	roiManager("XOR");	
-	roiManager("Add");
-	
-	//the last ROI to be added (nR-1) should be the one used in the measurements
 
 	nR = roiManager("count");
-
+	
+	roiManager("Select", newArray(nR-1,nR-2));
+	roiManager("XOR");	
+	roiManager("Add");
+	*/
+	
+	//the last ROI to be added (nR) should be the one used in the measurements
+	
 	selectWindow(file);
 	//Change channel here: alphaSMA
 	run("Duplicate...", "title=alphaSMA duplicate channels=2");
 	rename(file+"-alphaSMA");
 	
 	// measure signal intensity of the channel of interest
-	roiManager("Select", nR-1);
+	roiManager("Select", nR);
 	roiManager("Measure");
 
 	//save original file with ROIs 
 	selectWindow(file);
 	roiManager("Show All without labels");
-	roiManager("Select", nR-1);
+	roiManager("Select", nR);
+	
 	run("From ROI Manager");
-	run("Overlay Options...", "stroke=yellow width=4 fill=none apply");
+	run("Overlay Options...", "width=4 fill=none apply");
 	run("Flatten");
+	
 	run("Save", "save=["+output+File.separator+file+"-ROIs.png]");
 
 	//close all Windows and clear ROIManager and Results table
