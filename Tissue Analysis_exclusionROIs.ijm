@@ -61,7 +61,9 @@ function processFile(input, output, file) {
 	roiManager("Add");
 	*/
 	
-	//the last ROI to be added (nR) should be the one used in the measurements
+	//the last ROI to be added (nR-1) should be the one used in the measurements
+	
+	nR = roiManager("count");
 	
 	selectWindow(file);
 	//Change channel here: alphaSMA
