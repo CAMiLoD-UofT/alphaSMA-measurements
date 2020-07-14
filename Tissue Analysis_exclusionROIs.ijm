@@ -80,7 +80,7 @@ function processFile(input, output, file) {
 	roiManager("Select", nR-1);
 	
 	run("From ROI Manager");
-	run("Overlay Options...", "width=4 fill=none apply");
+	run("Overlay Options...", "width=4 fill=#f4ffb9 apply");
 	run("Flatten");
 	
 	run("Save", "save=["+output+File.separator+file+"-ROIs.png]");
