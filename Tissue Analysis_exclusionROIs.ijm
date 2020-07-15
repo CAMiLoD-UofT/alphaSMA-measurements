@@ -67,7 +67,7 @@ function processFile(input, output, file) {
 	
 	selectWindow(file);
 	//Change channel here: alphaSMA
-	run("Duplicate...", "title=alphaSMA duplicate channels=2");
+	run("Duplicate...", "title=alphaSMA duplicate channels=1-1");
 	rename(file+"-alphaSMA");
 	
 	// measure signal intensity of the channel of interest
