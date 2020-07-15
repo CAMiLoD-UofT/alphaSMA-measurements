@@ -36,9 +36,9 @@ function processFile(input, output, file) {
 	run("Duplicate...", "duplicate channels=3-3 title=Nuclei"); //Change channel here: nuclei
 	selectWindow("Nuclei");
 	rename(file+"-Nuclei");	
-	run("Gaussian Blur...", "sigma=10"); 
+	run("Gaussian Blur...", "sigma=15");
+	run("Save", "save=["+output+File.separator+file+"-NucleiDetection.png]");
 	run("Find Maxima...", "prominence=20 output=Count");
-
 
 	//Cell-related segments in highly confluent cultures will be determined by Voronoi
 	selectWindow(file+"-Nuclei");
