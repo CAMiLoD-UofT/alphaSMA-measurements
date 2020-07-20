@@ -57,6 +57,7 @@ function processFile(input, output, file) {
 
 	// we have the ROIs so all we have to do now is apply them to the channels of interest
 	selectWindow(file);
+	getPixelSize(unit, pixelWidth, pixelHeight);
 	run("Duplicate...", "duplicate channels=1-1 title=alphaSMA");	//Change channel here: alphaSMA
 	selectWindow("alphaSMA");
 	rename(file+"-alphaSMA");
@@ -65,6 +66,7 @@ function processFile(input, output, file) {
 	run("OrientationJ Analysis", "tensor=1.0 gradient=0 hsb=on hue=Orientation sat=Coherency bri=Original-Image coherency=on radian=on ");
 	selectWindow("OJ-Coherency-1");
 	rename(file+"-Coherency");
+	run("Properties...", "unit=micron pixel_width=pixelWidth pixel_height=pixelHeight");
 
 	//restore selection and measure the average mean of coherency in the cell shape ROI
 	roiManager("SelectAll");
