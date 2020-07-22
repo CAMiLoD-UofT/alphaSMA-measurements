@@ -1,6 +1,6 @@
-// Detect mean alphaSMA coherency raw integrated density and intensity levels on very confluent cells using a Voronoi approach to segment image
+// Detect mean alphaSMA coherency and intensity levels on very confluent cells using a Voronoi approach to segment image.
 // By Joao Firmino, PhD
-// v0.4
+// v1.0
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
@@ -96,5 +96,5 @@ function processFile(input, output, file) {
 
 }
 
-	saveAs("alphaSMAResults", output+File.separator+"alphaSMA-Results.csv");
+	saveAs("alphaSMAResults", output+File.separator+"alphaSMA-Results_"+random+".csv");
 	run("Clear Results");
