@@ -22,7 +22,7 @@ function processFolder(input) {
 
 function processFile(input, output, file) {
 	
-	run("Set Measurements...", " mean integrated display redirect=None decimal=3");
+	run("Set Measurements...", " area mean integrated display redirect=None decimal=3");
 	
 	// First step consist in opening an image
 	// If file format is TIF, images are split into three 8-bit-channels; you MUST verify that channels only contain the expected signal (i.e. no channel merging)
