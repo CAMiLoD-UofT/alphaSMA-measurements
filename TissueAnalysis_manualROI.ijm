@@ -22,7 +22,7 @@ function processFolder(input) {
 
 function processFile(input, output, file) {
 	
-	run("Set Measurements...", " mean integrated limit display redirect=None decimal=3");
+	run("Set Measurements...", " area mean integrated limit display redirect=None decimal=3");
 	open(input+File.separator+file);
 		if(suffix==".tif") {
 		run("Make Composite");
