@@ -1,6 +1,6 @@
-// Detect alphaSMA coherency raw integrated density and intensity levels based on cell shape as determined by the phalloidin staining. A watershed is applied to refine the obtained ROIs.
+// Detect alphaSMA coherency and intensity levels based on cell shape as determined by the phalloidin staining. A watershed is applied to refine the obtained ROIs.
 // By Joao Firmino, PhD
-// v0.4
+// v1.0
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
@@ -100,5 +100,5 @@ function processFile(input, output, file) {
 	
 }
 
-	saveAs("alphaSMAResults", output+File.separator+"alphaSMA-Results.csv");
+	saveAs("alphaSMAResults", output+File.separator+"alphaSMA-Results_"+random+".csv");
 	run("Clear Results");
