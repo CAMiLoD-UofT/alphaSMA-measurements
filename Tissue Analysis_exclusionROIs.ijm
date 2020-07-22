@@ -1,6 +1,6 @@
 // Tissue Quantification of alphaSMA intensity levels by manually defining excluded areas of the image
 // by Joao Firmino, PhD
-// v0.2
+// v1.0
 
 #@ File (label = "Input directory", style = "directory") input
 #@ File (label = "Output directory", style = "directory") output
@@ -91,5 +91,5 @@ function processFile(input, output, file) {
 	run("Close All");
 }
 
-	saveAs("Results", output+File.separator+"alphaSMA-Results.csv");
+	saveAs("Results", output+File.separator+"alphaSMA-Results_"+random+".csv");
 	run("Clear Results");
